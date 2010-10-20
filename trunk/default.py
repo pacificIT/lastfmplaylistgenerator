@@ -1,3 +1,8 @@
+"""
+    Script for generating smart playlists based on a seeding track and last.fm api
+	Created by: ErlendSB
+"""
+
 import os
 import httplib, urllib, urllib2
 import sys
