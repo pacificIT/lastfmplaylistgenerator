@@ -85,6 +85,7 @@ class Main:
 
 			uriPB.update(100, 'Taking you to your playlist...')
 		uriPB.close()
+		#xbmc.executebuiltin('SetCurrentPlaylist(0)')
 		xbmc.executebuiltin('XBMC.ActivateWindow(10500)')
 	
 if ( __name__ == "__main__" ):
