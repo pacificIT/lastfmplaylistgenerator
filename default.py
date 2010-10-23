@@ -25,6 +25,7 @@ class Main:
 		currentlyPlayingArtist = xbmc.Player().getMusicInfoTag().getArtist()
 		countFoundTracks = 0
 		xbmc.PlayList(0).clear()
+		xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
 		self.fetch_similarTracks(currentlyPlayingTitle,currentlyPlayingArtist)
 		 
 			
@@ -85,8 +86,8 @@ class Main:
 
 			uriPB.update(100, 'Taking you to your playlist...')
 		uriPB.close()
-		#xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
-		#xbmc.executehttpapi('setplaylistsong(0)')
+		
+		xbmc.executebuiltin('SetCurrentPlaylist(0)')
 		xbmc.executebuiltin('XBMC.ActivateWindow(10500)')
 	
 if ( __name__ == "__main__" ):
