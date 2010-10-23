@@ -85,7 +85,8 @@ class Main:
 
 			uriPB.update(100, 'Taking you to your playlist...')
 		uriPB.close()
-		#xbmc.executebuiltin('SetCurrentPlaylist(0)')
+		#xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
+		#xbmc.executehttpapi('setplaylistsong(0)')
 		xbmc.executebuiltin('XBMC.ActivateWindow(10500)')
 	
 if ( __name__ == "__main__" ):
