@@ -6,7 +6,7 @@
 import os
 import httplib, urllib, urllib2
 import sys, time
-import xbmc, xbmcgui
+import xbmc, xbmcgui, xbmcaddon
 from urllib import quote_plus, unquote_plus
 import re
 
@@ -15,6 +15,10 @@ class Main:
 	foundTracks = []
 	currentSeedingTrack = 0
 	maxRetries = 5
+	
+	__settings__ = xbmcaddon.Addon(id='script.lastfmplaylistgenerator')
+	playlistsize = ( 10, 15, 20, 25, 30, 40, 50, )[ int( __settings__.getSetting( "playlistsize" ) ) ]
+	print "playlistsize: " + str(playlistsize)
 	apiPath = "http://ws.audioscrobbler.com/2.0/?api_key=71e468a84c1f40d4991ddccc46e40f1b"
 	
 	def __init__( self ):
@@ -95,11 +99,14 @@ class Main:
 					#xbmc.executebuiltin( "AddToPlayList(" + trackPath + ";0)")
 					self.countFoundTracks += 1
 					self.foundTracks += [similarTrackName + '|' + similarArtistName]
+			if (self.countFoundTracks >= self.playlistsize):
+				percentComplete = 100
+				break
 			
 			#uriPB.update(percentComplete, 'Finding similar tracks to: ' + currentlyPlayingTitle + " by: " + currentlyPlayingArtist, str(self.countFoundTracks) + " found so far - (try:" + str(self.currentSeedingTrack) + "/" + str(self.maxRetries) +")" )   
 			uriPB.update(int(percentComplete), str(self.countFoundTracks) + " found so far - (try:" + str(self.currentSeedingTrack + 1) + "/" + str(self.maxRetries) +")" )   
 			
-		if (self.countFoundTracks < 25 and len(self.foundTracks) > self.currentSeedingTrack and self.currentSeedingTrack < self.maxRetries):
+		if (self.countFoundTracks < self.playlistsize and len(self.foundTracks) > self.currentSeedingTrack and self.currentSeedingTrack < self.maxRetries - 1):
 			print "TOO few results. Trying again with: " + self.foundTracks[self.currentSeedingTrack]
 			similarTrackName =self.foundTracks[self.currentSeedingTrack].split('|')[0]
 			similarArtistName =self.foundTracks[self.currentSeedingTrack].split('|')[1]
