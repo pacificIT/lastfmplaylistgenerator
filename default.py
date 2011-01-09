@@ -14,15 +14,13 @@ class MyPlayer( xbmc.Player ) :
 	countFoundTracks = 0
 	foundTracks = []
 	currentSeedingTrack = 0
-	maxRetries = 5
 	
 	__settings__ = xbmcaddon.Addon(id='script.lastfmplaylistgenerator')
-	playlistsize = ( 10, 15, 20, 25, 30, 40, 50, )[ int( __settings__.getSetting( "playlistsize" ) ) ]
-	print "playlistsize: " + str(playlistsize)
 	apiPath = "http://ws.audioscrobbler.com/2.0/?api_key=71e468a84c1f40d4991ddccc46e40f1b"
 	
 	def __init__ ( self ):
 		xbmc.Player.__init__( self )
+		xbmc.PlayList(0).clear()
 		print "init MyPlayer"
 	
 	def onPlayBackStarted(self):
@@ -32,8 +30,8 @@ class MyPlayer( xbmc.Player ) :
 			currentlyPlayingTitle = xbmc.Player().getMusicInfoTag().getTitle()
 			print currentlyPlayingTitle
 			currentlyPlayingArtist = xbmc.Player().getMusicInfoTag().getArtist()
-			countFoundTracks = 0
-			xbmc.PlayList(0).clear()
+			self.countFoundTracks = 0
+			#self.foundTracks = []
 			xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
 			self.foundTracks += [currentlyPlayingTitle + '|' + currentlyPlayingArtist]
 			self.fetch_similarTracks(currentlyPlayingTitle,currentlyPlayingArtist)
@@ -42,7 +40,7 @@ class MyPlayer( xbmc.Player ) :
 		SCRIPT_NAME = "LAST.FM Playlist generator"
 		uriPB = xbmcgui.DialogProgress()
 		uriPB.create(SCRIPT_NAME, 'Finding similar tracks')
-		uriPB.update(0, str(self.countFoundTracks) + " found so far - (try:" + str(self.currentSeedingTrack + 1) + "/" + str(self.maxRetries) +")" )   
+		uriPB.update(0, str(self.countFoundTracks) + " found so far" )   
 		apiMethod = "&method=track.getsimilar"
 
 		# The url in which to use
@@ -77,27 +75,19 @@ class MyPlayer( xbmc.Player ) :
 				trackTitle = fields[0]
 				trackPath = fields[3] + fields[4]
 				#print "Found: " + trackTitle + " by: " + artist
-				if (similarTrackName + '|' + similarArtistName not in self.foundTracks):
+				if (similarTrackName + '|' + similarArtistName not in self.foundTracks and artist != currentlyPlayingArtist):
 					xbmc.PlayList(0).add(trackPath)
 					#xbmc.executebuiltin( "AddToPlayList(" + trackPath + ";0)")
 					self.countFoundTracks += 1
 					self.foundTracks += [similarTrackName + '|' + similarArtistName]
-			if (self.countFoundTracks >= self.playlistsize):
+			if (self.countFoundTracks >= 3):
 				percentComplete = 100
 				break
 			
-			#uriPB.update(percentComplete, 'Finding similar tracks to: ' + currentlyPlayingTitle + " by: " + currentlyPlayingArtist, str(self.countFoundTracks) + " found so far - (try:" + str(self.currentSeedingTrack) + "/" + str(self.maxRetries) +")" )   
-			uriPB.update(int(percentComplete), str(self.countFoundTracks) + " found so far - (try:" + str(self.currentSeedingTrack + 1) + "/" + str(self.maxRetries) +")" )   
+			uriPB.update(int(percentComplete), str(self.countFoundTracks) + " found so far" )   
 			
-		if (self.countFoundTracks < self.playlistsize and len(self.foundTracks) > self.currentSeedingTrack and self.currentSeedingTrack < self.maxRetries - 1):
-			print "TOO few results. Trying again with: " + self.foundTracks[self.currentSeedingTrack]
-			similarTrackName =self.foundTracks[self.currentSeedingTrack].split('|')[0]
-			similarArtistName =self.foundTracks[self.currentSeedingTrack].split('|')[1]
-			self.currentSeedingTrack += 1
-			self.fetch_similarTracks(similarTrackName,similarArtistName)
-			uriPB.update(100, 'Taking you to your playlist...')
 
-		if (self.countFoundTracks == 0 and self.currentSeedingTrack < self.maxRetries):
+		if (self.countFoundTracks == 0):
 			uriPB.update(100, 'No results found...')
 			time.sleep(3)
 			return False
