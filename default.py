@@ -10,7 +10,7 @@ import xbmc, xbmcgui, xbmcaddon
 from urllib import quote_plus, unquote_plus
 import re
 
-class Main:
+class MyPlayer( xbmc.Player ) :
 	countFoundTracks = 0
 	foundTracks = []
 	currentSeedingTrack = 0
@@ -21,40 +21,23 @@ class Main:
 	print "playlistsize: " + str(playlistsize)
 	apiPath = "http://ws.audioscrobbler.com/2.0/?api_key=71e468a84c1f40d4991ddccc46e40f1b"
 	
-	def __init__( self ):
-
-		if xbmc.Player().isPlayingAudio() == False:
-			return False
-
-		currentlyPlayingTitle = xbmc.Player().getMusicInfoTag().getTitle()
-		currentlyPlayingArtist = xbmc.Player().getMusicInfoTag().getArtist()
-		countFoundTracks = 0
-		xbmc.PlayList(0).clear()
-		xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
-		self.foundTracks += [currentlyPlayingTitle + '|' + currentlyPlayingArtist]
-		#xbmc.executebuiltin( "AddToPlayList(" + xbmc.Player().getMusicInfoTag().getURL() + ";0)")
-
-		#xbmc.executehttpapi('setplaylistsong(0)')
-		self.fetch_similarTracks(currentlyPlayingTitle,currentlyPlayingArtist)
-		 
+	def __init__ ( self ):
+		xbmc.Player.__init__( self )
+		print "init MyPlayer"
 	
-	# def fetch_similarArtists( self, currentlyPlayingArtist):
-		# apiMethod = "&method=artist.getsimilar"
-
-		# # The url in which to use
-		# Base_URL = self.apiPath + apiMethod + "&artist=" + currentlyPlayingArtist.replace(" ","+")
-
-		# WebSock = urllib.urlopen(Base_URL)  # Opens a 'Socket' to URL
-		# WebHTML = WebSock.read()            # Reads Contents of URL and saves to Variable
-		# WebSock.close()                     # Closes connection to url
-
-		# xbmc.executehttpapi("setresponseformat(openRecordSet;<recordset>;closeRecordSet;</recordset>;openRecord;<record>;closeRecord;</record>;openField;<field>;closeField;</field>)");
-
-		# similarArtists = re.findall("<artist>.+?<name>(.+?)</name>.+?</artist>", WebHTML, re.DOTALL )
-		# for similarArtistName in similarArtists:
-			# return similarArtistName
-		
-
+	def onPlayBackStarted(self):
+		print "onPlayBackStarted"
+		xbmc.sleep(2000)
+		if xbmc.Player().isPlayingAudio() == True:
+			currentlyPlayingTitle = xbmc.Player().getMusicInfoTag().getTitle()
+			print currentlyPlayingTitle
+			currentlyPlayingArtist = xbmc.Player().getMusicInfoTag().getArtist()
+			countFoundTracks = 0
+			xbmc.PlayList(0).clear()
+			xbmc.PlayList(0).add(url= xbmc.Player().getMusicInfoTag().getURL(), index=0)
+			self.foundTracks += [currentlyPlayingTitle + '|' + currentlyPlayingArtist]
+			self.fetch_similarTracks(currentlyPlayingTitle,currentlyPlayingArtist)
+	
 	def fetch_similarTracks( self, currentlyPlayingTitle, currentlyPlayingArtist ):
 		SCRIPT_NAME = "LAST.FM Playlist generator"
 		uriPB = xbmcgui.DialogProgress()
@@ -122,7 +105,10 @@ class Main:
 		uriPB.close()
 		
 		xbmc.executebuiltin('SetCurrentPlaylist(0)')
-		xbmc.executebuiltin('XBMC.ActivateWindow(10500)')
-	
-if ( __name__ == "__main__" ):
-    Main()
+		
+		
+		
+p=MyPlayer()
+
+while(1):
+	xbmc.sleep(500)
