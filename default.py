@@ -25,6 +25,7 @@ class MyPlayer( xbmc.Player ) :
 		xbmc.Player.__init__( self )
 		xbmc.PlayList(0).clear()
 		self.firstRun = 1
+		
 		xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",Start by playing a song)")
 		#print "init MyPlayer"
 	
@@ -88,7 +89,7 @@ class MyPlayer( xbmc.Player ) :
 			
 		if (self.countFoundTracks == 0):
 			time.sleep(3)
-			self.firstRun = 1
+			#self.firstRun = 1
 			print "None found"
 			xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",No similar tracks were found)")
 			return False
