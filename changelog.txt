@@ -2,3 +2,5 @@
 - Initial prototype
 1.0.1
 - Created launcher - a way to exit partymode
+1.0.2
+- Fixed: urlencode search url
