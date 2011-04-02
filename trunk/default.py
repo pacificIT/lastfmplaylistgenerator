@@ -63,7 +63,7 @@ class Main:
 		apiMethod = "&method=track.getsimilar"
 
 		# The url in which to use
-		Base_URL = self.apiPath + apiMethod + "&artist=" + currentlyPlayingArtist.replace(" ","+") + "&track=" + currentlyPlayingTitle.replace(" ","+")
+		Base_URL = self.apiPath + apiMethod + "&artist=" + urllib.quote_plus(currentlyPlayingArtist) + "&track=" + urllib.quote_plus(currentlyPlayingTitle)
 		print Base_URL
 		WebSock = urllib.urlopen(Base_URL)  # Opens a 'Socket' to URL
 		WebHTML = WebSock.read()            # Reads Contents of URL and saves to Variable
