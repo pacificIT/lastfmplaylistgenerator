@@ -2,3 +2,4 @@
 
 1.0.0
 - Initial prototype
+1.0.1 - Fixed: urlencode search url
