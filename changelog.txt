@@ -4,3 +4,6 @@
 - Created launcher - a way to exit partymode
 1.0.2
 - Fixed: urlencode search url
+1.0.3
+- Added: Reset script when existing xbmc before toggeling it "Off"
+- Changed: If more than one similar track is found - pick on at random
