@@ -9,6 +9,8 @@ import sys, time
 import xbmc, xbmcgui, xbmcaddon
 from urllib import quote_plus, unquote_plus
 import re
+from os.path import exists
+from os import remove
 
 
 class MyPlayer( xbmc.Player ) :
@@ -26,7 +28,11 @@ class MyPlayer( xbmc.Player ) :
 		xbmc.Player.__init__( self )
 		xbmc.PlayList(0).clear()
 		self.firstRun = 1
-       		xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",Start by playing a song)")
+		BASE_RESOURCE_PATH = os.path.join( os.getcwd(), "resources" )
+		process = os.path.join( BASE_RESOURCE_PATH , "pm.pid")
+		removeauto('lastfmplaylistgeneratorpm')
+		addauto("os.remove('" + os.path.normpath(process).replace('\\','\\\\') + "')","lastfmplaylistgeneratorpm")
+		xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",Start by playing a song)")
 		#print "init MyPlayer"
 	
 	def onPlayBackStarted(self):
@@ -67,7 +73,7 @@ class MyPlayer( xbmc.Player ) :
 			#print "Looking for: " + similarTrackName + " - " + similarArtistName
 			similarTrackName = similarTrackName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","'").replace("'","''").replace("&amp;","and")
 			similarArtistName = similarArtistName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","'").replace("'","''").replace("&amp;","and")
-			sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' limit 1"
+			sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by random() limit 1"
 			music_xml = xbmc.executehttpapi( "QueryMusicDatabase(%s)" % quote_plus( sql_music ), )
 			# separate the records
 			records = re.findall( "<record>(.+?)</record>", music_xml, re.DOTALL )
@@ -95,7 +101,40 @@ class MyPlayer( xbmc.Player ) :
 			return False
 			
 		xbmc.executebuiltin('SetCurrentPlaylist(0)')
-		
+
+def addauto(newentry, scriptcode):
+	autoexecfile = "special://masterprofile/autoexec.py"
+	if exists(autoexecfile):
+		fh = open(autoexecfile)
+		lines = []
+		for line in fh.readlines():
+			lines.append(line)
+		lines.append("import time" + "#" + scriptcode + "\n")
+		lines.append("time.sleep(2)" + "#" + scriptcode + "\n")
+		lines.append(newentry + "#" + scriptcode + "\n")
+		fh.close()
+		f = open(autoexecfile, "w")
+		if not "import xbmc\n" in lines:
+			f.write("import xbmc" + "#" + scriptcode + "\n")
+		if not "import os\n" in lines:
+			f.write("import os" + "#" + scriptcode + "\n")
+		f.writelines(lines)
+		f.close()
+	else:
+		f = open(autoexecfile, "w")
+		f.write("import xbmc" + "#" + scriptcode + "\n")
+		f.write(newentry + "#" + scriptcode + "\n")
+		f.close()
+
+def removeauto(scriptcode):
+	autoexecfile = "special://masterprofile/autoexec.py"
+	if exists(autoexecfile):
+		fh = open(autoexecfile)
+		lines = [ line for line in fh if not line.strip().endswith("#" + scriptcode) ]
+		fh.close()
+		f = open(autoexecfile, "w")
+		f.writelines(lines)
+		f.close()
 		
 BASE_RESOURCE_PATH = os.path.join( os.getcwd(), "resources" )
 
@@ -103,6 +142,9 @@ process = os.path.join( BASE_RESOURCE_PATH , "pm.pid")
 p=MyPlayer()
 while(1):
 	if os.path.exists(process):
+		if (xbmc.abortRequested):
+			os.remove(process)
+			print "deleting pid"
 		xbmc.sleep(500)
 	else:
 		break
