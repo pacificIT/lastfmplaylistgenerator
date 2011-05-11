@@ -21,7 +21,7 @@ class MyPlayer( xbmc.Player ) :
 	SCRIPT_NAME = "LAST.FM Playlist Generator"
 
 	
-	__settings__ = xbmcaddon.Addon(id='script.lastfmplaylistgenerator')
+	__settings__ = xbmcaddon.Addon(id='script.lastfmplaylistgeneratorPM')
 	apiPath = "http://ws.audioscrobbler.com/2.0/?api_key=71e468a84c1f40d4991ddccc46e40f1b"
 	
 	def __init__ ( self ):
@@ -31,7 +31,7 @@ class MyPlayer( xbmc.Player ) :
 		BASE_RESOURCE_PATH = os.path.join( os.getcwd(), "resources" )
 		process = os.path.join( BASE_RESOURCE_PATH , "pm.pid")
 		removeauto('lastfmplaylistgeneratorpm')
-		addauto("os.remove('" + os.path.normpath(process).replace('\\','\\\\') + "')","lastfmplaylistgeneratorpm")
+		addauto("if os.path.exists('" + os.path.normpath(process).replace('\\','\\\\') + "'):#lastfmplaylistgeneratorpm\n\tos.remove('" + os.path.normpath(process).replace('\\','\\\\') + "')","lastfmplaylistgeneratorpm")
 		xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",Start by playing a song)")
 		#print "init MyPlayer"
 	
