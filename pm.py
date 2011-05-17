@@ -85,7 +85,12 @@ class MyPlayer( xbmc.Player ) :
 				trackPath = fields[3] + fields[4]
 				print "Found: " + trackTitle + " by: " + artist
 				if (similarTrackName + '|' + similarArtistName not in self.foundTracks and artist != currentlyPlayingArtist):
-					xbmc.PlayList(0).add(trackPath)
+					listitem = xbmcgui.ListItem(trackTitle)
+					cache_name = xbmc.getCacheThumbName( artist )
+					fanart = "special://profile/Thumbnails/Music/%s/%s" % ( "Fanart", cache_name, )
+					listitem.setProperty('fanart_image',fanart)
+					print "Fanart:%s" % fanart
+					xbmc.PlayList(0).add(url=trackPath, listitem=listitem)
 					xbmc.executebuiltin("Container.Refresh")
 					#xbmc.executebuiltin( "AddToPlayList(" + trackPath + ";0)")
 					self.countFoundTracks += 1
