@@ -10,7 +10,7 @@ BASE_RESOURCE_PATH = os.path.join( os.getcwd(), "resources" )
 
 process = os.path.join( BASE_RESOURCE_PATH , "pm.pid")
 if os.path.exists(process):
-    if xbmcgui.Dialog().yesno("Last.FM playlist generator (partmode)", "Would you like to exit partymode?" ):
+    if xbmcgui.Dialog().yesno("Last.FM playlist generator (partymode)", "Would you like to exit partymode?" ):
         os.remove(process)        
 else:
     file( process , "w" ).write( "" )
