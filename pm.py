@@ -4,6 +4,7 @@
 """
 
 import os
+import random
 import httplib, urllib, urllib2
 import sys, time
 import xbmc, xbmcgui, xbmcaddon
@@ -67,6 +68,7 @@ class MyPlayer( xbmc.Player ) :
 		xbmc.executehttpapi("setresponseformat(openRecordSet;<recordset>;closeRecordSet;</recordset>;openRecord;<record>;closeRecord;</record>;openField;<field>;closeField;</field>)");
 
 		similarTracks = re.findall("<track>.+?<name>(.+?)</name>.+?<artist>.+?<name>(.+?)</name>.+?</artist>.+?</track>", WebHTML, re.DOTALL )
+		random.shuffle(similarTracks)
 		countTracks = len(similarTracks)
 		#print "Count: " + str(countTracks)
 		for similarTrackName, similarArtistName in similarTracks:
