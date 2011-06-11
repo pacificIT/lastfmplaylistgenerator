@@ -138,6 +138,9 @@ def addauto(newentry, scriptcode):
 		f.close()
 	else:
 		f = open(autoexecfile, "w")
+		f.write("import time" + "#" + scriptcode + "\n")
+		f.write("time.sleep(2)" + "#" + scriptcode + "\n")
+		f.write("import os" + "#" + scriptcode + "\n")
 		f.write("import xbmc" + "#" + scriptcode + "\n")
 		f.write(newentry + "#" + scriptcode + "\n")
 		f.close()
