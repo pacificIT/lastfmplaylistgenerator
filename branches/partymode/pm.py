@@ -119,7 +119,8 @@ class MyPlayer( xbmc.Player ) :
 		xbmc.executebuiltin('SetCurrentPlaylist(0)')
 
 def addauto(newentry, scriptcode):
-	autoexecfile = "special://masterprofile/autoexec.py"
+	autoexecfile = xbmc.translatePath('special://home/userdata/autoexec.py')
+	#autoexecfile = "special://masterprofile/autoexec.py"
 	if exists(autoexecfile):
 		fh = open(autoexecfile)
 		lines = []
@@ -146,7 +147,8 @@ def addauto(newentry, scriptcode):
 		f.close()
 
 def removeauto(scriptcode):
-	autoexecfile = "special://masterprofile/autoexec.py"
+	autoexecfile = xbmc.translatePath('special://home/userdata/autoexec.py')
+	#autoexecfile = "special://masterprofile/autoexec.py"
 	if exists(autoexecfile):
 		fh = open(autoexecfile)
 		lines = [ line for line in fh if not line.strip().endswith("#" + scriptcode) ]
