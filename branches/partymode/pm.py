@@ -95,8 +95,8 @@ class MyPlayer( xbmc.Player ) :
 		print "Count: " + str(countTracks)
 		for similarTrackName, matchValue, similarArtistName in similarTracks:
 			#print "Looking for: " + similarTrackName + " - " + similarArtistName + " - " + matchValue
-			similarTrackName = similarTrackName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","'").replace("'","''").replace("&amp;","and")
-			similarArtistName = similarArtistName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","'").replace("'","''").replace("&amp;","and")
+			similarTrackName = similarTrackName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
+			similarArtistName = similarArtistName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
 			sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by random() limit 1"
 			music_xml = xbmc.executehttpapi( "QueryMusicDatabase(%s)" % quote_plus( sql_music ), )
 			# separate the records
