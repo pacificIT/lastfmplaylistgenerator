@@ -60,10 +60,10 @@ class MyPlayer( xbmc.Player ) :
 		xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",Start by playing a song)")
 	
 	def startPlayBack(self):
-		print "onPlayBackStarted started"
+		print "[LFM PLG(PM)] onPlayBackStarted started"
 		if xbmc.Player().isPlayingAudio() == True:
 			currentlyPlayingTitle = xbmc.Player().getMusicInfoTag().getTitle()
-			print currentlyPlayingTitle + " started playing"
+			print "[LFM PLG(PM)] " + currentlyPlayingTitle + " started playing"
 			currentlyPlayingArtist = xbmc.Player().getMusicInfoTag().getArtist()
 			self.countFoundTracks = 0
 			if (self.firstRun == 1):
@@ -71,7 +71,7 @@ class MyPlayer( xbmc.Player ) :
 				#print "firstRun - clearing playlist"
 				album = xbmc.Player().getMusicInfoTag().getAlbum()
 				cache_name = xbmc.getCacheThumbName(os.path.dirname(xbmc.Player().getMusicInfoTag().getURL()))
-				print "Playing file: %s" % xbmc.Player().getMusicInfoTag().getURL()
+				print "[LFM PLG(PM)] Playing file: %s" % xbmc.Player().getMusicInfoTag().getURL()
 				thumb = "special://profile/Thumbnails/Music/%s/%s" % ( cache_name[:1], cache_name, )
 				duration = xbmc.Player().getMusicInfoTag().getDuration()
 				listitem = self.getListItem(currentlyPlayingTitle,currentlyPlayingArtist,album,thumb,duration)
@@ -83,7 +83,7 @@ class MyPlayer( xbmc.Player ) :
 			self.fetch_similarTracks(currentlyPlayingTitle,currentlyPlayingArtist)
 
 	def onPlayBackStarted(self):
-		print "onPlayBackStarted waiting:  " + str(self.delaybeforesearching) +" seconds"
+		print "[LFM PLG(PM)] onPlayBackStarted waiting:  " + str(self.delaybeforesearching) +" seconds"
 		if (self.timer is not None and self.timer.isAlive()):
 			self.timer.cancel()
 			
@@ -106,7 +106,7 @@ class MyPlayer( xbmc.Player ) :
 		random.shuffle(similarTracks)
 		foundArtists = []
 		countTracks = len(similarTracks)
-		print "Count: " + str(countTracks)
+		print "[LFM PLG(PM)] Count: " + str(countTracks)
 		for similarTrackName, matchValue, similarArtistName in similarTracks:
 			#print "Looking for: " + similarTrackName + " - " + similarArtistName + " - " + matchValue
 			similarTrackName = similarTrackName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
@@ -127,7 +127,7 @@ class MyPlayer( xbmc.Player ) :
 				trackPath = fields[3] + fields[4]
 				thumb = fields[5]
 				duration = int(fields[6])
-				print "Found: " + trackTitle + " by: " + artist
+				print "[LFM PLG(PM)] Found: " + trackTitle + " by: " + artist
 				if (self.allowtrackrepeat == "true" or (self.allowtrackrepeat == "false" and trackPath not in self.addedTracks)):
 					if (self.preferdifferentartist == "false" or (self.preferdifferentartist == "true" and eval(matchValue) < 0.2 and similarArtistName not in foundArtists)):
 						listitem = self.getListItem(trackTitle,artist,album,thumb,duration)
@@ -144,7 +144,7 @@ class MyPlayer( xbmc.Player ) :
 		if (self.countFoundTracks == 0):
 			time.sleep(3)
 			#self.firstRun = 1
-			print "None found"
+			print "[LFM PLG(PM)] None found"
 			xbmc.executebuiltin("Notification(" + self.SCRIPT_NAME+",No similar tracks were found)")
 			return False
 			
@@ -157,7 +157,7 @@ class MyPlayer( xbmc.Player ) :
 		listitem.setProperty('fanart_image',fanart)
 		listitem.setInfo('music', { 'title': trackTitle, 'artist': artist, 'album': album, 'duration': duration })
 		listitem.setThumbnailImage(thumb)
-		print "Fanart:%s" % fanart
+		print "[LFM PLG(PM)] Fanart:%s" % fanart
 		return listitem
 
 def addauto(newentry, scriptcode):
@@ -207,7 +207,7 @@ while(1):
 	if os.path.exists(process):
 		if (xbmc.abortRequested):
 			os.remove(process)
-			print "deleting pid"
+			print "[LFM PLG(PM)] deleting pid"
 		xbmc.sleep(500)
 	else:
 		break
