@@ -113,7 +113,7 @@ class MyPlayer( xbmc.Player ) :
 			similarArtistName = similarArtistName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
 			if self.dbtype == 'mysql':
 				sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by rand() limit 1"
-			else
+			else:
 				sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by random() limit 1"
 			music_xml = xbmc.executehttpapi( "QueryMusicDatabase(%s)" % quote_plus( sql_music ), )
 			# separate the records
