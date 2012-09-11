@@ -20,6 +20,7 @@ class MyPlayer( xbmc.Player ) :
 	addedTracks = []
 	currentSeedingTrack = 0
 	firstRun = 0
+	dbtype = 'sqlite3'
 	timeStarted = time.time()
 	SCRIPT_NAME = "LAST.FM Playlist Generator"
 
@@ -36,6 +37,19 @@ class MyPlayer( xbmc.Player ) :
 	apiPath = "http://ws.audioscrobbler.com/2.0/?api_key=71e468a84c1f40d4991ddccc46e40f1b"
 	
 	def __init__ ( self ):
+		if not os.path.exists(xbmc.translatePath("special://userdata/advancedsettings.xml")):
+			self.dbtype = 'sqlite3'
+		else:
+			from xml.etree.ElementTree import ElementTree
+			advancedsettings = ElementTree()
+			advancedsettings.parse(xbmc.translatePath("special://userdata/advancedsettings.xml"))
+			settings = advancedsettings.getroot().find("musicdatabase")
+			if settings is not None:
+				for setting in settings:
+					if setting.tag == 'type':
+						self.dbtype = setting.text
+			else:
+				self.dbtype = 'sqlite3'
 		xbmc.Player.__init__( self )
 		xbmc.PlayList(0).clear()
 		self.firstRun = 1
@@ -97,7 +111,10 @@ class MyPlayer( xbmc.Player ) :
 			#print "Looking for: " + similarTrackName + " - " + similarArtistName + " - " + matchValue
 			similarTrackName = similarTrackName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
 			similarArtistName = similarArtistName.replace("+"," ").replace("("," ").replace(")"," ").replace("&quot","''").replace("'","''").replace("&amp;","and")
-			sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by random() limit 1"
+			if self.dbtype == 'mysql':
+				sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by rand() limit 1"
+			else
+				sql_music = "select strTitle, strArtist, strAlbum, strPath, strFileName, strThumb, iDuration from songview where strTitle LIKE '%%" + similarTrackName + "%%' and strArtist LIKE '%%" + similarArtistName + "%%' order by random() limit 1"
 			music_xml = xbmc.executehttpapi( "QueryMusicDatabase(%s)" % quote_plus( sql_music ), )
 			# separate the records
 			records = re.findall( "<record>(.+?)</record>", music_xml, re.DOTALL )
