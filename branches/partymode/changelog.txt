@@ -1,3 +1,6 @@
+1.1.0
+- Changed: From HTTPApi to jsonrpc
+- Frodo compatibility - might not work in Eden
 1.0.9
 - Fixed: String escapeing
 	Error was trown if title contained &quot;
