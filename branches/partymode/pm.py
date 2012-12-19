@@ -138,8 +138,8 @@ class MyPlayer( xbmc.Player ) :
 					duration = int(item["duration"])
 					fanart = item["fanart"]
 					log("[LFM PLG(PM)] Found: " + str(trackTitle) + " by: " + str(artist))
-					if (self.allowtrackrepeat == "true" or (self.allowtrackrepeat == "false" and trackPath not in self.addedTracks)):
-						if (self.preferdifferentartist == "false" or (self.preferdifferentartist == "true" and eval(matchValue) < 0.2 and similarArtistName not in foundArtists)):
+					if (self.allowtrackrepeat == "1" or (self.allowtrackrepeat == "0" and trackPath not in self.addedTracks)):
+						if (self.preferdifferentartist == "0" or (self.preferdifferentartist == "1" and eval(matchValue) < 0.2 and similarArtistName not in foundArtists)):
 							listitem = self.getListItem(trackTitle,artist,album,thumb,fanart,duration)
 							xbmc.PlayList(0).add(url=trackPath, listitem=listitem)
 							#xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Playlist.Add", "params": { "item": {"file": "%s"}, "playlistid": 0 }, "id": 1}' % trackPath)
